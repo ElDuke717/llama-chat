@@ -9,8 +9,16 @@ app.get('/', (req, res) => {
   res.send('Chat interface');
 });
 
-app.get('/run-codellama', (req, res) => {
-  exec('codellama your-input-here', (error, stdout, stderr) => {
+// Parse JSON bodies for this app. Make sure you put
+// `app.use(express.json())` before your route handlers!
+app.use(express.json());
+
+app.post('/run-codellama', (req, res) => {
+  // Get the input from the request body
+  const input = req.body.input;
+
+  // Execute the codellama command with the input
+  exec(`ollama  run llama2 ${input}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing codellama: ${error}`);
       return res.status(500).json({ error: `Error executing codellama: ${error}` });
